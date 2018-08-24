@@ -3,6 +3,7 @@ import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
 import Array exposing (..)
 import Dict exposing (..)
+import Random
 
 main =
   Browser.sandbox
@@ -34,12 +35,16 @@ init =
   , scorecard = Dict.empty
   }
   
+seed = 12345744
 
 newDie =
   { value = 1, hold = False }
 
 highDie =
   { value = 5, hold = True }
+
+dieRoll =
+  Random.int 1 6
 
 scoreOptions = Dict.fromList
   [ ("Ones", \a -> 10)
