@@ -4580,9 +4580,16 @@ var elm$core$Array$fromList = function (list) {
 		return A3(elm$core$Array$fromListHelp, list, _List_Nil, 0);
 	}
 };
-var author$project$Main$init = elm$core$Array$fromList(
-	_List_fromArray(
-		[author$project$Main$newDie, author$project$Main$newDie, author$project$Main$newDie, author$project$Main$newDie, author$project$Main$newDie]));
+var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
+var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
+var author$project$Main$init = {
+	dice: elm$core$Array$fromList(
+		_List_fromArray(
+			[author$project$Main$newDie, author$project$Main$newDie, author$project$Main$newDie, author$project$Main$newDie, author$project$Main$newDie])),
+	options: elm$core$Dict$empty,
+	roll: 1,
+	scorecard: elm$core$Dict$empty
+};
 var author$project$Main$highDie = {hold: true, value: 5};
 var elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
 var elm$core$Array$bitMask = 4294967295 >>> (32 - elm$core$Array$shiftStep);
@@ -4639,12 +4646,23 @@ var elm$core$Array$set = F3(
 	});
 var author$project$Main$update = F2(
 	function (msg, model) {
-		var index = msg.a;
-		return A3(elm$core$Array$set, index, author$project$Main$highDie, model);
+		if (msg.$ === 'Hold') {
+			var index = msg.a;
+			return _Utils_update(
+				model,
+				{
+					dice: A3(elm$core$Array$set, index, author$project$Main$highDie, model.dice)
+				});
+		} else {
+			return _Utils_update(
+				model,
+				{roll: model.roll + 1});
+		}
 	});
 var author$project$Main$Hold = function (a) {
 	return {$: 'Hold', a: a};
 };
+var author$project$Main$Roll = {$: 'Roll'};
 var elm$core$Maybe$Just = function (a) {
 	return {$: 'Just', a: a};
 };
@@ -4985,7 +5003,7 @@ var author$project$Main$view = function (model) {
 				elm$html$Html$div,
 				_List_Nil,
 				elm$core$Array$toList(
-					A2(elm$core$Array$map, author$project$Main$intToText, model))),
+					A2(elm$core$Array$map, author$project$Main$intToText, model.dice))),
 				A2(
 				elm$html$Html$div,
 				_List_Nil,
@@ -5000,7 +5018,7 @@ var author$project$Main$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('hold')
+								elm$html$Html$text('Hold')
 							])),
 						A2(
 						elm$html$Html$button,
@@ -5011,7 +5029,7 @@ var author$project$Main$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('hold')
+								elm$html$Html$text('Hold')
 							])),
 						A2(
 						elm$html$Html$button,
@@ -5022,7 +5040,7 @@ var author$project$Main$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('hold')
+								elm$html$Html$text('Hold')
 							])),
 						A2(
 						elm$html$Html$button,
@@ -5033,7 +5051,7 @@ var author$project$Main$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('hold')
+								elm$html$Html$text('Hold')
 							])),
 						A2(
 						elm$html$Html$button,
@@ -5044,9 +5062,21 @@ var author$project$Main$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('hold')
+								elm$html$Html$text('Hold')
 							]))
-					]))
+					])),
+				A2(
+				elm$html$Html$button,
+				_List_fromArray(
+					[
+						elm$html$Html$Events$onClick(author$project$Main$Roll)
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('Roll')
+					])),
+				elm$html$Html$text(
+				elm$core$String$fromInt(model.roll))
 			]));
 };
 var elm$core$Platform$Cmd$batch = _Platform_batch;

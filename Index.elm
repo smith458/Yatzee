@@ -2,6 +2,7 @@ import Browser
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
 import Array exposing (..)
+import Dict exposing (..)
 
 main =
   Browser.sandbox
@@ -13,7 +14,12 @@ main =
 
 -- MODEL
 
-type alias Model = Array Die
+type alias Model =
+  { dice : Array Die
+  , roll : Int
+  , options : Dict String (List Int -> Int)
+  , scorecard : Dict String Int
+  }
 
 type alias Die =
   { value : Int
@@ -22,7 +28,12 @@ type alias Die =
 
 init : Model
 init = 
-  fromList [ newDie, newDie, newDie, newDie, newDie ]
+  { dice = Array.fromList [ newDie, newDie, newDie, newDie, newDie ]
+  , roll = 1
+  , options = Dict.empty
+  , scorecard = Dict.empty
+  }
+  
 
 newDie =
   { value = 1, hold = False }
@@ -30,15 +41,24 @@ newDie =
 highDie =
   { value = 5, hold = True }
 
+scoreOptions = Dict.fromList
+  [ ("Ones", \a -> 10)
+  , ("Twos", \a -> 10)
+  ]
+
+
 -- UPDATE
 
-type Msg = Hold Int
+type Msg = Hold Int | Roll
 
 update: Msg -> Model -> Model
 update msg model =
   case msg of
     Hold index ->
-      set index highDie model
+      { model | dice = (set index highDie model.dice)}
+
+    Roll ->
+      { model | roll = model.roll + 1}
 
 -- VIEW
 intToText a =
@@ -47,12 +67,14 @@ intToText a =
 view : Model -> Html Msg
 view model = 
   div []
-    [ div [] (toList(map intToText model))
+    [ div [] (Array.toList(Array.map intToText model.dice))
     , div[]
-      [ button [onClick (Hold 0)] [ text "hold"]
-      , button [onClick (Hold 1)] [ text "hold"]
-      , button [onClick (Hold 2)] [ text "hold"]
-      , button [onClick (Hold 3)] [ text "hold"]
-      , button [onClick (Hold 4)] [ text "hold"]
+      [ button [onClick (Hold 0)] [ text "Hold"]
+      , button [onClick (Hold 1)] [ text "Hold"]
+      , button [onClick (Hold 2)] [ text "Hold"]
+      , button [onClick (Hold 3)] [ text "Hold"]
+      , button [onClick (Hold 4)] [ text "Hold"]
       ]
+    , button [onClick Roll] [ text "Roll"]
+    , text (String.fromInt model.roll)
     ]
